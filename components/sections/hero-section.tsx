@@ -19,17 +19,16 @@ export function HeroSection() {
               <Button className="bg-primary text-primary-foreground">✨ Explore Internships</Button>
             </a>
             <Link href="/auth">
-              <Button variant="outline" className="border-primary text-primary hover:bg-primary/10 bg-transparent">
+              <Button variant="outline" className="border-primary text-primary hover:bg-primary/10 bg-transparent dark:border-white dark:text-white">
                 🎯 Join Now
               </Button>
             </Link>
           </div>
         </div>
-        <div className="rounded-lg border bg-muted p-6">
+        <div className="rounded-lg">
           <img
-            src={"/placeholder.svg?height=360&width=560&query=students%20internship%20collaboration%20illustration"}
-            alt="Students collaborating on internships"
-            className="h-auto w-full rounded-md"
+            alt="Placeholder"
+            className="h-auto w-full rounded-md themed-placeholder"
           />
         </div>
       </div>
