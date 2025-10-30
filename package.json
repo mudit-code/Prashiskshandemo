@@ -8,6 +8,9 @@
     "lint": "next lint",
     "start": "next start"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
     "@neondatabase/serverless": "latest",
