@@ -13,14 +13,14 @@ export default async function AdminDashboard() {
         Welcome, {session.name ?? session.email}. Verify organizations, monitor activity, and manage credits.
       </p>
       <section className="mt-6 grid gap-4 md:grid-cols-3">
-        <Card title="Verifications" />
-        <Card title="Reports" />
-        <Card title="System Settings" />
+        <DashboardCard title="Verifications" />
+        <DashboardCard title="Reports" />
+        <DashboardCard title="System Settings" />
       </section>
     </main>
   )
 }
 
-function Card({ title }: { title: string }) {
+function DashboardCard({ title }: { title: string }) {
   return <div className="rounded-lg border bg-card p-5">{title}</div>
 }

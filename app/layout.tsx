@@ -6,11 +6,15 @@ import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { Navbar } from "@/components/navbar"
 import { Suspense } from "react"
+import { ThemeProvider } from "@/components/theme-provider"
 
 export const metadata: Metadata = {
-  title: "v0 App",
+  title: "prashikshan",
   description: "Created with v0",
   generator: "v0.app",
+  icons: {
+    icon: '/favicon.ico',
+  },
 }
 
 export default function RootLayout({
@@ -28,10 +32,12 @@ export default function RootLayout({
         />
       </head>
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
-        <Suspense fallback={<div>Loading...</div>}>
-          <Navbar />
-          {children}
-        </Suspense>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <Suspense fallback={<div>Loading...</div>}>
+            <Navbar />
+            {children}
+          </Suspense>
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>
