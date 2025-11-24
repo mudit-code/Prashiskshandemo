@@ -45,7 +45,7 @@ export function StudentRegisterForm() {
         password,
         options: {
           emailRedirectTo: (process as any).env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || window.location.origin,
-          data: { full_name: fullName, role },
+          data: { full_name: fullName, role, email_confirm: false },
         },
       })
       if (signUpError) throw signUpError
@@ -204,7 +204,7 @@ export function StudentRegisterForm() {
               name="password"
               type="password"
               required
-              pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*"
+              pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*"
               title="Password must include at least one uppercase letter, one lowercase letter, and one digit."
               aria-describedby="student-password-help"
             />
@@ -219,7 +219,7 @@ export function StudentRegisterForm() {
               name="confirmPassword"
               type="password"
               required
-              pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*"
+              pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*"
               title="Password must include at least one uppercase letter, one lowercase letter, and one digit."
             />
           </div>

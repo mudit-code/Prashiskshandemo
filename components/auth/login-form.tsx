@@ -20,25 +20,40 @@ export function LoginForm() {
     const form = e.currentTarget
     const data = Object.fromEntries(new FormData(form).entries()) as any
 
-    // optional client-side pattern check for UX
     const email = String(data.email || "").trim()
     const password = String(data.password || "")
     const selectedRole = String(data.role || "").trim()
 
     try {
       const supabase = getBrowserSupabase()
-      const { error: signInError, data: signInData } = await supabase.auth.signInWithPassword({ email, password })
+      let { error: signInError, data: signInData } = await supabase.auth.signInWithPassword({ email, password })
+
       if (signInError) {
-        setError(signInError.message || "Login failed")
-        setLoading(false)
-        return
+        // In dev, if the error is "Email not confirmed", we can try to auto-confirm it.
+        // This is a convenience for developers and should not be in production.
+        if (process.env.NODE_ENV === "development" && signInError.message === "Email not confirmed") {
+          console.log("Attempting to auto-confirm email for", email)
+          // This is a risky operation and requires service_role key. Consider carefully.
+          // For this specific sandbox, we are allowing it for developer convenience.
+          await fetch("/api/confirm-user", { method: "POST", body: JSON.stringify({ email }) })
+
+          // Retry sign-in
+          const retryResponse = await supabase.auth.signInWithPassword({ email, password })
+          signInError = retryResponse.error
+          signInData = retryResponse.data
+        }
+
+        if (signInError) {
+          setError(signInError.message || "Login failed")
+          setLoading(false)
+          return
+        }
       }
 
       // Ensure profile exists and get role
       const user = signInData.user
       let targetRole = selectedRole
       if (user) {
-        // upsert a profile if missing (id must match auth.uid() due to RLS)
         await supabase.from("profiles").upsert(
           {
             id: user.id,
@@ -70,6 +85,16 @@ export function LoginForm() {
     }
   }
 
+  async function handleLoginWithGoogle() {
+    const supabase = getBrowserSupabase()
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${location.origin}/auth/callback`,
+      },
+    })
+  }
+
   return (
     <form onSubmit={onSubmit} className="rounded-lg border bg-card p-5">
       <div className="grid gap-4">
@@ -91,8 +116,15 @@ export function LoginForm() {
           <Input id="password" name="password" type="password" required />
         </div>
       </div>
-      <Button disabled={loading} type="submit" className="mt-4 bg-primary text-primary-foreground">
+      <Button disabled={loading} type="submit" className="mt-4 w-full bg-primary text-primary-foreground">
         {loading ? "Signing in..." : "Sign In"}
+      </Button>
+      <Button
+        type="button"
+        onClick={handleLoginWithGoogle}
+        className="mt-4 w-full bg-secondary text-secondary-foreground"
+      >
+        Login with Google
       </Button>
       {error && (
         <p className="mt-2 text-sm text-red-600" role="alert">
